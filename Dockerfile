@@ -7,3 +7,5 @@ RUN pip3 install oauth2
 RUN python3 -m pip install -U zxcvbn
 # auto_backup module
 RUN python3 -m pip install -U pysftp
+# For the code reload to work
+RUN pip3 install -U watchdog
