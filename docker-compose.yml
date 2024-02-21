@@ -1,13 +1,41 @@
-version: '3.1'
+version: "3.1"
 services:
   web:
     build: .
-    restart: unless-stopped
+    container_name: real_state_web
+    depends_on:
+      - db
+    # command: odoo -d db_real_state_date -u all
+    # command: odoo -d db_real_state_date -u company_module_name
+    # command: odoo --dev all
     ports:
       - "8069:8069"
       - "8072:8072"
     volumes:
-      - ./odoo:/var/lib/odoo
-      - ./log:/var/log/odoo
+      - odoo-web-data:/var/lib/odoo
       - ./config:/etc/odoo
       - ./addons/modules:/mnt/extra-addons
+      - ./enterprise:/mnt/enterprise
+  db:
+    image: postgres:latest
+    container_name: real_state_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data/pgdata
+  pg-admin:
+    image: dpage/pgadmin4:latest
+    container_name: real_state_pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+volumes:
+  odoo-web-data:
+  odoo-db-data:
